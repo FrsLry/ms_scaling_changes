@@ -137,11 +137,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#number-of-colonization-extinction-and-persistence" id="toc-number-of-colonization-extinction-and-persistence" class="nav-link" data-scroll-target="#number-of-colonization-extinction-and-persistence">Number of Colonization, Extinction and Persistence</a>
   <ul class="collapse">
   <li><a href="#czatlas-4" id="toc-czatlas-4" class="nav-link" data-scroll-target="#czatlas-4">CzAtlas</a></li>
+  <li><a href="#czbbs-3" id="toc-czbbs-3" class="nav-link" data-scroll-target="#czbbs-3">CzBBS</a></li>
+  </ul></li>
+  <li><a href="#probability-of-colonization-extinction-and-persistence" id="toc-probability-of-colonization-extinction-and-persistence" class="nav-link" data-scroll-target="#probability-of-colonization-extinction-and-persistence">Probability of Colonization, Extinction and Persistence</a>
+  <ul class="collapse">
+  <li><a href="#czatlas-5" id="toc-czatlas-5" class="nav-link" data-scroll-target="#czatlas-5">CzAtlas</a></li>
+  <li><a href="#czbbs-4" id="toc-czbbs-4" class="nav-link" data-scroll-target="#czbbs-4">CzBBS</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#figures" id="toc-figures" class="nav-link" data-scroll-target="#figures">Figures</a>
   <ul class="collapse">
   <li><a href="#species-richness-2" id="toc-species-richness-2" class="nav-link" data-scroll-target="#species-richness-2">Species richness</a></li>
+  <li><a href="#number-of-colonization-extinction-persistence-and-turnover" id="toc-number-of-colonization-extinction-persistence-and-turnover" class="nav-link" data-scroll-target="#number-of-colonization-extinction-persistence-and-turnover">Number of Colonization, Extinction, Persistence and Turnover</a></li>
+  <li><a href="#probability-of-colonization-extinction-persistence" id="toc-probability-of-colonization-extinction-persistence" class="nav-link" data-scroll-target="#probability-of-colonization-extinction-persistence">Probability of Colonization, Extinction, Persistence</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -186,7 +194,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtext)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Load data</span></span>
@@ -194,7 +204,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">## We perform repeated (n = 3) cross-validation (k = 10) using the caret package</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># First we split the dataset into training and validation datasets</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">333</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># set.seed(333)</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>traindata <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"repeatedcv"</span>, <span class="at">number =</span> <span class="dv">10</span>, <span class="at">repeats =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
@@ -726,7 +736,144 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="czatlas-4" class="level3">
 <h3 class="anchored" data-anchor-id="czatlas-4">CzAtlas</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nCEP_models <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../models/nCEP_atlas.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nCEP_atlas_models <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../models/nCEP_atlas.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Create the dataframe to predict</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>nCEP_topredict <span class="ot">&lt;-</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>atlas_data_topredict <span class="sc">%&gt;%</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AREA <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Date, time_span, sr, effort)) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effort_diff =</span> <span class="dv">0</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">timespan_diff =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="do">## add the periods</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(<span class="at">period =</span> <span class="fu">c</span>(<span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>, <span class="st">"M2M4"</span>))</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="do">## And make predictions for each metric</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>predicted_nCEP_atlas <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="do">## predictions for each metric</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(THE_metric <span class="cf">in</span> <span class="fu">names</span>(nCEP_atlas_models)){</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> nCEP_atlas_models[[THE_metric]][[<span class="st">"xgboost"</span>]]</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, </span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>                  <span class="at">newdata =</span> nCEP_topredict)</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>  predicted_nCEP_atlas <span class="ot">&lt;-</span> </span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(predicted_nCEP_atlas,</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>        nCEP_topredict <span class="sc">%&gt;%</span> <span class="fu">cbind</span>(<span class="at">pred =</span> <span class="fu">round</span>(pred)) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">metric =</span> THE_metric))</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Also, compute jaccard index</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="do">## Compute turnover</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>predicted_nCEP_atlas <span class="ot">&lt;-</span> </span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>predicted_nCEP_atlas <span class="sc">%&gt;%</span> </span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(Lat, Long, AREA, polypoint_ratio, KVADRAT, elevation, spatial_scale, effort_diff, timespan_diff),</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_from =</span> <span class="fu">c</span>(metric,period),</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> pred,</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">""</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Lat, Long, AREA, polypoint_ratio, KVADRAT, elevation, spatial_scale, effort_diff, timespan_diff) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">jaccardM2M3 =</span> persM2M3<span class="sc">/</span>(persM2M3 <span class="sc">+</span> colM2M3 <span class="sc">+</span> extM2M3),</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>         <span class="at">jaccardM3M4 =</span> persM3M4<span class="sc">/</span>(persM3M4 <span class="sc">+</span> colM3M4 <span class="sc">+</span> extM3M4),</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>         <span class="at">jaccardM2M4 =</span> persM2M4<span class="sc">/</span>(persM2M4 <span class="sc">+</span> colM2M4 <span class="sc">+</span> extM2M4)) <span class="sc">%&gt;%</span> </span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="czbbs-3" class="level3">
+<h3 class="anchored" data-anchor-id="czbbs-3">CzBBS</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nCEP_BBS_models <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../models/nCEP_JPSP.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>predicted_nCEP_BBS <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(THE_metric <span class="cf">in</span> <span class="fu">names</span>(nCEP_BBS_models)){</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> nCEP_BBS_models[[THE_metric]][[<span class="st">"rf"</span>]]</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">predict</span>(model, </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">newdata =</span> JPSP_topredict <span class="sc">%&gt;%</span> </span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>time_span, <span class="sc">-</span>id, <span class="sc">-</span>sr, <span class="sc">-</span>Date, polypoint_ratio, Lat, Long, elevation, AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">timespan_diff =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>              <span class="fu">crossing</span>(<span class="at">period =</span> <span class="fu">c</span>(<span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>, <span class="st">"M2M4"</span>)))</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  predicted_nCEP_BBS <span class="ot">&lt;-</span> </span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    predicted_nCEP_BBS,</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    JPSP_topredict <span class="sc">%&gt;%</span> </span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(time_span, Lat, Long, elevation, AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">metric =</span> THE_metric) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">crossing</span>(<span class="at">period =</span> <span class="fu">c</span>(<span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>, <span class="st">"M2M4"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">pred =</span> <span class="fu">round</span>(pred))</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Compute turnover</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>predicted_nCEP_BBS <span class="ot">&lt;-</span> </span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>predicted_nCEP_BBS <span class="sc">%&gt;%</span> </span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(Lat, Long, AREA, elevation, time_span),</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_from =</span> <span class="fu">c</span>(metric,period),</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> pred,</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">""</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Lat, Long, AREA, elevation, time_span) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">jaccardM2M3 =</span> persM2M3<span class="sc">/</span>(persM2M3 <span class="sc">+</span> colM2M3 <span class="sc">+</span> extM2M3),</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>         <span class="at">jaccardM3M4 =</span> persM3M4<span class="sc">/</span>(persM3M4 <span class="sc">+</span> colM3M4 <span class="sc">+</span> extM3M4),</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>         <span class="at">jaccardM2M4 =</span> persM2M4<span class="sc">/</span>(persM2M4 <span class="sc">+</span> colM2M4 <span class="sc">+</span> extM2M4)) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="probability-of-colonization-extinction-and-persistence" class="level2">
+<h2 class="anchored" data-anchor-id="probability-of-colonization-extinction-and-persistence">Probability of Colonization, Extinction and Persistence</h2>
+<section id="czatlas-5" class="level3">
+<h3 class="anchored" data-anchor-id="czatlas-5">CzAtlas</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>pCEP_atlas_models <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../models/probaCEP_atlas.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Create the dataframe to predict</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>pCEP_topredict <span class="ot">&lt;-</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>atlas_data_topredict <span class="sc">%&gt;%</span> </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(((KVADRAT <span class="sc">==</span> <span class="dv">6844</span> <span class="sc">&amp;</span> Date <span class="sc">==</span> <span class="dv">2015</span> <span class="sc">&amp;</span> effort <span class="sc">!=</span> <span class="dv">5</span>))<span class="sc">|</span>(KVADRAT <span class="sc">==</span> <span class="dv">7248</span> <span class="sc">&amp;</span> Date <span class="sc">==</span> <span class="dv">2015</span> <span class="sc">&amp;</span> effort <span class="sc">!=</span> <span class="dv">5</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(AREA <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Date, time_span, sr, effort)) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">effort_diff =</span> <span class="dv">0</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">timespan_diff =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="do">## add the periods</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(<span class="at">period =</span> <span class="fu">c</span>(<span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>, <span class="st">"M2M4"</span>))</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="do">## And make predictions for each metric</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>predicted_pCEP_atlas <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="do">## predictions for each metric</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(THE_metric <span class="cf">in</span> <span class="fu">names</span>(pCEP_atlas_models)){</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> pCEP_atlas_models[[THE_metric]][[<span class="st">"xgboost"</span>]]</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, </span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>                  <span class="at">newdata =</span> pCEP_topredict)</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  predicted_pCEP_atlas <span class="ot">&lt;-</span> </span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(predicted_pCEP_atlas,</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>        pCEP_topredict <span class="sc">%&gt;%</span> <span class="fu">cbind</span>(pred) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">metric =</span> THE_metric))</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="czbbs-4" class="level3">
+<h3 class="anchored" data-anchor-id="czbbs-4">CzBBS</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>pCEP_BBS_models <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"../models/probaCEP_JPSP.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>predicted_pCEP_BBS <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(THE_metric <span class="cf">in</span> <span class="fu">names</span>(pCEP_BBS_models)){</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> pCEP_BBS_models[[THE_metric]][[<span class="st">"rf"</span>]]</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">predict</span>(model, </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">newdata =</span> JPSP_topredict <span class="sc">%&gt;%</span> </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>time_span, <span class="sc">-</span>id, <span class="sc">-</span>sr, <span class="sc">-</span>Date, polypoint_ratio, Lat, Long, elevation, AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">timespan_diff =</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>              <span class="fu">crossing</span>(<span class="at">period =</span> <span class="fu">c</span>(<span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>, <span class="st">"M2M4"</span>)))</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  predicted_pCEP_BBS <span class="ot">&lt;-</span> </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    predicted_pCEP_BBS,</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    JPSP_topredict <span class="sc">%&gt;%</span> </span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(time_span, Lat, Long, elevation, AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">metric =</span> THE_metric) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">crossing</span>(<span class="at">period =</span> <span class="fu">c</span>(<span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>, <span class="st">"M2M4"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(pred)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -736,235 +883,489 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="species-richness-2" class="level2">
 <h2 class="anchored" data-anchor-id="species-richness-2">Species richness</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># M2M4 ####</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/sr_spatialscaling_M2M4.pdf"</span>,</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Data management</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>slope_JPSP_M2M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    slope_130_M2M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>        slope_530_M2M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>        slope_2150_M2M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        slope_CR_M2M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
-<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Plot</span></span>
-<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(area, slope, <span class="at">group =</span> area))<span class="sc">+</span></span>
-<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
-<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
-<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species Richness change</span><span class="sc">\n</span><span class="st">per year"</span>)<span class="sc">+</span></span>
-<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
-<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>())<span class="sc">+</span></span>
-<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>,  <span class="at">color =</span> <span class="st">"blue"</span>)<span class="sc">+</span></span>
-<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun =</span> mean,</span>
-<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.data =</span> mean_se,</span>
-<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"errorbar"</span>, <span class="at">size =</span> .<span class="dv">5</span>, <span class="at">width =</span> .<span class="dv">1</span>, <span class="at">color =</span> <span class="st">"red"</span>)<span class="sc">+</span></span>
-<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
-<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
-<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">clip =</span> <span class="st">"off"</span>)<span class="sc">+</span></span>
-<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))</span>
-<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># M2M4 ####</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/sr_spatialscaling_M2M4.pdf"</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Data management</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>slope_JPSP_M2M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    slope_130_M2M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>        slope_530_M2M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>        slope_2150_M2M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>        slope_CR_M2M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Plot</span></span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(area, slope, <span class="at">group =</span> area))<span class="sc">+</span></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species Richness change</span><span class="sc">\n</span><span class="st">per year"</span>)<span class="sc">+</span></span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>())<span class="sc">+</span></span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>,  <span class="at">color =</span> <span class="st">"blue"</span>)<span class="sc">+</span></span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun =</span> mean,</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.data =</span> mean_se,</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"errorbar"</span>, <span class="at">size =</span> .<span class="dv">5</span>, <span class="at">width =</span> .<span class="dv">1</span>, <span class="at">color =</span> <span class="st">"red"</span>)<span class="sc">+</span></span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">clip =</span> <span class="st">"off"</span>)<span class="sc">+</span></span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>png 
   2 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># M2M3 ####</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/sr_spatialscaling_M2M3.pdf"</span>,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>slope_JPSP_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    slope_130_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        slope_530_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>        slope_2150_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>        slope_CR_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(area, slope, <span class="at">group =</span> area))<span class="sc">+</span></span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
-<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
-<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species Richness change</span><span class="sc">\n</span><span class="st">per year"</span>)<span class="sc">+</span></span>
-<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
-<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>())<span class="sc">+</span></span>
-<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>,  <span class="at">color =</span> <span class="st">"blue"</span>)<span class="sc">+</span></span>
-<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun =</span> mean,</span>
-<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.data =</span> mean_se,</span>
-<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"errorbar"</span>, <span class="at">size =</span> .<span class="dv">5</span>, <span class="at">width =</span> .<span class="dv">1</span>, <span class="at">color =</span> <span class="st">"red"</span>)<span class="sc">+</span></span>
-<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
-<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
-<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">clip =</span> <span class="st">"off"</span>)<span class="sc">+</span></span>
-<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))</span>
-<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># M2M3 ####</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/sr_spatialscaling_M2M3.pdf"</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>slope_JPSP_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    slope_130_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>        slope_530_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>        slope_2150_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>        slope_CR_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(area, slope, <span class="at">group =</span> area))<span class="sc">+</span></span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species Richness change</span><span class="sc">\n</span><span class="st">per year"</span>)<span class="sc">+</span></span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>())<span class="sc">+</span></span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>,  <span class="at">color =</span> <span class="st">"blue"</span>)<span class="sc">+</span></span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun =</span> mean,</span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.data =</span> mean_se,</span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"errorbar"</span>, <span class="at">size =</span> .<span class="dv">5</span>, <span class="at">width =</span> .<span class="dv">1</span>, <span class="at">color =</span> <span class="st">"red"</span>)<span class="sc">+</span></span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
+<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">clip =</span> <span class="st">"off"</span>)<span class="sc">+</span></span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))</span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>png 
   2 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># M3M4 ####</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/sr_spatialscaling_M3M4.pdf"</span>,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>slope_JPSP_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    slope_130_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        slope_530_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>        slope_2150_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>        slope_CR_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(area, slope, <span class="at">group =</span> area))<span class="sc">+</span></span>
-<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
-<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
-<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species Richness change</span><span class="sc">\n</span><span class="st">per year"</span>)<span class="sc">+</span></span>
-<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
-<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>())<span class="sc">+</span></span>
-<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>,  <span class="at">color =</span> <span class="st">"blue"</span>)<span class="sc">+</span></span>
-<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun =</span> mean,</span>
-<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.data =</span> mean_se,</span>
-<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"errorbar"</span>, <span class="at">size =</span> .<span class="dv">5</span>, <span class="at">width =</span> .<span class="dv">1</span>, <span class="at">color =</span> <span class="st">"red"</span>)<span class="sc">+</span></span>
-<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
-<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
-<span id="cb25-44"><a href="#cb25-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">clip =</span> <span class="st">"off"</span>)<span class="sc">+</span></span>
-<span id="cb25-45"><a href="#cb25-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))</span>
-<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># M3M4 ####</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/sr_spatialscaling_M3M4.pdf"</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>slope_JPSP_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    slope_130_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>        slope_530_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>        slope_2150_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>        slope_CR_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(area, slope, <span class="at">group =</span> area))<span class="sc">+</span></span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species Richness change</span><span class="sc">\n</span><span class="st">per year"</span>)<span class="sc">+</span></span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>())<span class="sc">+</span></span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>,  <span class="at">color =</span> <span class="st">"blue"</span>)<span class="sc">+</span></span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun =</span> mean,</span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope), <span class="at">fun.data =</span> mean_se,</span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"errorbar"</span>, <span class="at">size =</span> .<span class="dv">5</span>, <span class="at">width =</span> .<span class="dv">1</span>, <span class="at">color =</span> <span class="st">"red"</span>)<span class="sc">+</span></span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">clip =</span> <span class="st">"off"</span>)<span class="sc">+</span></span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))</span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>png 
   2 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Figure 4</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/fig4_sr.pdf"</span>,</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>slope_JPSP_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    slope_130_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>        slope_530_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>        slope_2150_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>        slope_CR_M2M3 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
-<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>      ) </span>
-<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">period =</span> <span class="st">"M2M3"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
-<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>    slope_JPSP_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
-<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>        slope_130_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rbind</span>(</span>
-<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>            slope_530_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
-<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>          ) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rbind</span>(</span>
-<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>            slope_2150_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
-<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a>          ) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rbind</span>(</span>
-<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>            slope_CR_M3M4 <span class="sc">%&gt;%</span> </span>
-<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
-<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>          ) </span>
-<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a>       ) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">period =</span> <span class="st">"M3M4"</span>)</span>
-<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">case_when</span>(</span>
-<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>    period <span class="sc">==</span> <span class="st">"M2M3"</span> <span class="sc">~</span> <span class="st">"1985-2003"</span>,</span>
-<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a>    period <span class="sc">==</span> <span class="st">"M3M4"</span> <span class="sc">~</span> <span class="st">"2003-2017"</span></span>
-<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">fct_relevel</span>(period, <span class="fu">c</span>(<span class="st">"1985-2003"</span>, <span class="st">"2003-2017"</span>))) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
-<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># geom_violin(aes(area, slope, group = interaction(area, period)))+</span></span>
-<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(area, slope, <span class="at">group =</span> <span class="fu">interaction</span>(area, period), <span class="at">color =</span> period))<span class="sc">+</span></span>
-<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope, <span class="at">color =</span> period), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a>  <span class="co"># stat_summary(aes(area, slope, color = period, shape = period), fun.y = median, geom = 'point', size = 2.5)+</span></span>
-<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ylim(-2, 2)+</span></span>
-<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
-<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
-<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
-<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species Richness change</span><span class="sc">\n</span><span class="st">per year"</span>)<span class="sc">+</span></span>
-<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Period"</span>, <span class="at">shape =</span> <span class="st">"Period"</span>, <span class="at">linetype =</span> <span class="st">"Period"</span>)<span class="sc">+</span></span>
-<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
-<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))<span class="sc">+</span></span>
-<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
-<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
-<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>())</span>
-<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Figure 4</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/sr_2periods.pdf"</span>,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>slope_JPSP_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    slope_130_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>        slope_530_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>        slope_2150_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb34-23"><a href="#cb34-23" aria-hidden="true" tabindex="-1"></a>        slope_CR_M2M3 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-24"><a href="#cb34-24" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-25"><a href="#cb34-25" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
+<span id="cb34-26"><a href="#cb34-26" aria-hidden="true" tabindex="-1"></a>      ) </span>
+<span id="cb34-27"><a href="#cb34-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">period =</span> <span class="st">"M2M3"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-28"><a href="#cb34-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
+<span id="cb34-29"><a href="#cb34-29" aria-hidden="true" tabindex="-1"></a>    slope_JPSP_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-30"><a href="#cb34-30" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">area =</span> AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-31"><a href="#cb34-31" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(slope, area) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-32"><a href="#cb34-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">ifelse</span>(area <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-33"><a href="#cb34-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rbind</span>(</span>
+<span id="cb34-34"><a href="#cb34-34" aria-hidden="true" tabindex="-1"></a>        slope_130_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-35"><a href="#cb34-35" aria-hidden="true" tabindex="-1"></a>          dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-36"><a href="#cb34-36" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-37"><a href="#cb34-37" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rbind</span>(</span>
+<span id="cb34-38"><a href="#cb34-38" aria-hidden="true" tabindex="-1"></a>            slope_530_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-39"><a href="#cb34-39" aria-hidden="true" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-40"><a href="#cb34-40" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">530</span>)</span>
+<span id="cb34-41"><a href="#cb34-41" aria-hidden="true" tabindex="-1"></a>          ) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-42"><a href="#cb34-42" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rbind</span>(</span>
+<span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a>            slope_2150_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">2150</span>)</span>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a>          ) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-47"><a href="#cb34-47" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rbind</span>(</span>
+<span id="cb34-48"><a href="#cb34-48" aria-hidden="true" tabindex="-1"></a>            slope_CR_M3M4 <span class="sc">%&gt;%</span> </span>
+<span id="cb34-49"><a href="#cb34-49" aria-hidden="true" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">select</span>(slope) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-50"><a href="#cb34-50" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">area =</span> <span class="dv">83900</span>)</span>
+<span id="cb34-51"><a href="#cb34-51" aria-hidden="true" tabindex="-1"></a>          ) </span>
+<span id="cb34-52"><a href="#cb34-52" aria-hidden="true" tabindex="-1"></a>       ) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">period =</span> <span class="st">"M3M4"</span>)</span>
+<span id="cb34-53"><a href="#cb34-53" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-54"><a href="#cb34-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">case_when</span>(</span>
+<span id="cb34-55"><a href="#cb34-55" aria-hidden="true" tabindex="-1"></a>    period <span class="sc">==</span> <span class="st">"M2M3"</span> <span class="sc">~</span> <span class="st">"1985-2003"</span>,</span>
+<span id="cb34-56"><a href="#cb34-56" aria-hidden="true" tabindex="-1"></a>    period <span class="sc">==</span> <span class="st">"M3M4"</span> <span class="sc">~</span> <span class="st">"2003-2017"</span></span>
+<span id="cb34-57"><a href="#cb34-57" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-58"><a href="#cb34-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">fct_relevel</span>(period, <span class="fu">c</span>(<span class="st">"1985-2003"</span>, <span class="st">"2003-2017"</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb34-59"><a href="#cb34-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb34-60"><a href="#cb34-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(area, slope, <span class="at">group =</span> <span class="fu">interaction</span>(area, period), <span class="at">color =</span> period))<span class="sc">+</span></span>
+<span id="cb34-61"><a href="#cb34-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(area, slope, <span class="at">color =</span> period), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb34-62"><a href="#cb34-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb34-63"><a href="#cb34-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb34-64"><a href="#cb34-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
+<span id="cb34-65"><a href="#cb34-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species Richness change</span><span class="sc">\n</span><span class="st">per year"</span>)<span class="sc">+</span></span>
+<span id="cb34-66"><a href="#cb34-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Period"</span>, <span class="at">shape =</span> <span class="st">"Period"</span>, <span class="at">linetype =</span> <span class="st">"Period"</span>)<span class="sc">+</span></span>
+<span id="cb34-67"><a href="#cb34-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">2</span>,<span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb34-68"><a href="#cb34-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb34-69"><a href="#cb34-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))<span class="sc">+</span></span>
+<span id="cb34-70"><a href="#cb34-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb34-71"><a href="#cb34-71" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb34-72"><a href="#cb34-72" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
+<span id="cb34-73"><a href="#cb34-73" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>())</span>
+<span id="cb34-74"><a href="#cb34-74" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>png 
+  2 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/trend_details.pdf"</span>, </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">3</span>, <span class="at">width =</span> <span class="fl">11.297</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Plot the detailed trends</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>JPSP_topredict <span class="sc">%&gt;%</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="fu">ifelse</span>(AREA <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(sr, Date, AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    pred130sqkm <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(pred_sr, Date) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="dv">130</span>) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">sr =</span> pred_sr),</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    pred530sqkm <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(pred_sr, Date) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="dv">530</span>) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">sr =</span> pred_sr),</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    pred2150sqkm <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(pred_sr, Date) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="dv">2150</span>) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">sr =</span> pred_sr),</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    predCR <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(pred_sr, Date) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="dv">83900</span>) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">sr =</span> pred_sr)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Date, sr))<span class="sc">+</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun =</span> median, </span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">col =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>), <span class="at">fun.y =</span> median,</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom =</span> <span class="st">"line"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"blue"</span>)<span class="sc">+</span></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> AREA, <span class="at">nrow =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Species richness"</span>)<span class="sc">+</span></span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Year"</span>)<span class="sc">+</span></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">1990</span>,<span class="dv">2000</span>,<span class="dv">2010</span>))<span class="sc">+</span></span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">strip.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>),</span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))</span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>png 
+  2 </code></pre>
+</div>
+</div>
+</section>
+<section id="number-of-colonization-extinction-persistence-and-turnover" class="level2">
+<h2 class="anchored" data-anchor-id="number-of-colonization-extinction-persistence-and-turnover">Number of Colonization, Extinction, Persistence and Turnover</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/nCEP_scaling.pdf"</span>,</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(periods <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>, <span class="st">"M2M4"</span>)){</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    predicted_nCEP_atlas <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(spatial_scale, <span class="fu">contains</span>(<span class="st">"M"</span>, <span class="at">ignore.case =</span> F)) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">AREA =</span> spatial_scale) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>      predicted_nCEP_BBS <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"M"</span>, <span class="at">ignore.case =</span> F), AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="fu">ifelse</span>(AREA <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>))</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(<span class="st">"AREA"</span>),</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">names_to =</span> <span class="st">"period"</span>,</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">separate</span>(period, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"metric"</span>, <span class="st">"period"</span>), <span class="at">sep =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(metric <span class="sc">==</span> <span class="st">"col"</span> <span class="sc">|</span> metric <span class="sc">==</span> <span class="st">"ext"</span> <span class="sc">|</span> metric <span class="sc">==</span> <span class="st">"pers"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(period <span class="sc">==</span> periods) <span class="sc">%&gt;%</span> </span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(AREA, value,</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>                   <span class="at">group =</span> <span class="fu">interaction</span>(AREA,metric),</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill =</span> metric),</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>                   <span class="at">outlier.shape =</span> <span class="cn">NA</span>)<span class="sc">+</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Dark2"</span>)<span class="sc">+</span></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Dark2"</span>)<span class="sc">+</span></span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">210</span>))<span class="sc">+</span></span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"bl"</span>)<span class="sc">+</span></span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(AREA, value, <span class="at">color =</span> metric), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Count"</span>)<span class="sc">+</span></span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain</span><span class="sc">\n</span><span class="st">(km²)"</span>)<span class="sc">+</span></span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Probability"</span>)<span class="sc">+</span></span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>png 
+  2 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/col_ext_jaccard_2periods.pdf"</span>,</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(THE_metric <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"jaccard"</span>, <span class="st">"col"</span>, <span class="st">"ext"</span>)){</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(THE_metric <span class="sc">==</span> <span class="st">"jaccard"</span>){</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(predicted_nCEP_atlas <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(spatial_scale, <span class="fu">contains</span>(<span class="st">"M"</span>, <span class="at">ignore.case =</span> F)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">AREA =</span> spatial_scale) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rbind</span>(predicted_nCEP_BBS <span class="sc">%&gt;%</span> </span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>                    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"M"</span>, <span class="at">ignore.case =</span> F), AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="fu">ifelse</span>(AREA <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>            dplyr<span class="sc">::</span><span class="fu">select</span>(AREA, <span class="fu">contains</span>(THE_metric)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>            <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">contains</span>(THE_metric),</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">names_to =</span> <span class="st">"period"</span>,</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>                         <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">str_remove</span>(period, THE_metric)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">case_when</span>(</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>              period <span class="sc">==</span> <span class="st">"M2M4"</span> <span class="sc">~</span> <span class="st">"1985-2017"</span>,</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>              period <span class="sc">==</span> <span class="st">"M2M3"</span> <span class="sc">~</span> <span class="st">"1985-2003"</span>,</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>              period <span class="sc">==</span> <span class="st">"M3M4"</span> <span class="sc">~</span> <span class="st">"2003-2017"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">fct_relevel</span>(period, <span class="fu">c</span>(<span class="st">"1985-2017"</span>, <span class="st">"1985-2003"</span>, <span class="st">"2003-2017"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(period <span class="sc">!=</span> <span class="st">"1985-2017"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(AREA, value, <span class="at">group =</span> <span class="fu">interaction</span>(AREA, period), <span class="at">color =</span> period))<span class="sc">+</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>            <span class="fu">stat_summary</span>(<span class="fu">aes</span>(AREA, value, <span class="at">color =</span> period), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>            <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ylab</span>(THE_metric)<span class="sc">+</span></span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Period"</span>, <span class="at">shape =</span> <span class="st">"Period"</span>, <span class="at">linetype =</span> <span class="st">"Period"</span>)<span class="sc">+</span></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>            <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a>            <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),<span class="at">legend.position =</span> <span class="st">"none"</span>))</span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(predicted_nCEP_atlas <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(spatial_scale, <span class="fu">contains</span>(<span class="st">"M"</span>, <span class="at">ignore.case =</span> F)) <span class="sc">%&gt;%</span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">AREA =</span> spatial_scale) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a>        <span class="fu">rbind</span>(predicted_nCEP_BBS <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"M"</span>, <span class="at">ignore.case =</span> F), AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a>                <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="fu">ifelse</span>(AREA <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(AREA, <span class="fu">contains</span>(THE_metric)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">contains</span>(THE_metric),</span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a>                     <span class="at">names_to =</span> <span class="st">"period"</span>,</span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a>                     <span class="at">values_to =</span> <span class="st">"value"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">str_remove</span>(period, THE_metric)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">case_when</span>(</span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a>            period <span class="sc">==</span> <span class="st">"M2M4"</span> <span class="sc">~</span> <span class="st">"1985-2017"</span>,</span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a>            period <span class="sc">==</span> <span class="st">"M2M3"</span> <span class="sc">~</span> <span class="st">"1985-2003"</span>,</span>
+<span id="cb40-44"><a href="#cb40-44" aria-hidden="true" tabindex="-1"></a>            period <span class="sc">==</span> <span class="st">"M3M4"</span> <span class="sc">~</span> <span class="st">"2003-2017"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb40-45"><a href="#cb40-45" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">fct_relevel</span>(period, <span class="fu">c</span>(<span class="st">"1985-2017"</span>, <span class="st">"1985-2003"</span>, <span class="st">"2003-2017"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb40-46"><a href="#cb40-46" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(period <span class="sc">!=</span> <span class="st">"1985-2017"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb40-47"><a href="#cb40-47" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb40-48"><a href="#cb40-48" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(AREA, value, <span class="at">group =</span> <span class="fu">interaction</span>(AREA, period), <span class="at">color =</span> period))<span class="sc">+</span></span>
+<span id="cb40-49"><a href="#cb40-49" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stat_summary</span>(<span class="fu">aes</span>(AREA, value, <span class="at">color =</span> period), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb40-50"><a href="#cb40-50" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb40-51"><a href="#cb40-51" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb40-52"><a href="#cb40-52" aria-hidden="true" tabindex="-1"></a>        <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
+<span id="cb40-53"><a href="#cb40-53" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylab</span>(THE_metric)<span class="sc">+</span></span>
+<span id="cb40-54"><a href="#cb40-54" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">50</span>)<span class="sc">+</span></span>
+<span id="cb40-55"><a href="#cb40-55" aria-hidden="true" tabindex="-1"></a>        <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Period"</span>, <span class="at">shape =</span> <span class="st">"Period"</span>, <span class="at">linetype =</span> <span class="st">"Period"</span>)<span class="sc">+</span></span>
+<span id="cb40-56"><a href="#cb40-56" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb40-57"><a href="#cb40-57" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb40-58"><a href="#cb40-58" aria-hidden="true" tabindex="-1"></a>              <span class="at">legend.position =</span> <span class="st">"none"</span>))</span>
+<span id="cb40-59"><a href="#cb40-59" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb40-60"><a href="#cb40-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-61"><a href="#cb40-61" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>png 
+  2 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/jaccard.pdf"</span>,</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(period <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"jaccardM2M3"</span>,<span class="st">"jaccardM3M4"</span>)){</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(predicted_nCEP_atlas <span class="sc">%&gt;%</span> </span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(spatial_scale, <span class="fu">contains</span>(<span class="st">"M"</span>, <span class="at">ignore.case =</span> F)) <span class="sc">%&gt;%</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">AREA =</span> spatial_scale) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">rbind</span>(predicted_nCEP_BBS <span class="sc">%&gt;%</span> </span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"M"</span>, <span class="at">ignore.case =</span> F), AREA) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">AREA =</span> <span class="fu">ifelse</span>(AREA <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(AREA, period) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="at">value =</span> period) <span class="sc">%&gt;%</span> </span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggplot</span>(<span class="fu">aes</span>(AREA, value, <span class="at">group =</span> AREA))<span class="sc">+</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">xlab</span>(<span class="st">"Spatial grain</span><span class="sc">\n</span><span class="st">(km²)"</span>)<span class="sc">+</span></span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylim</span>(.<span class="dv">35</span>, <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylab</span>(<span class="st">"Jaccard"</span>)<span class="sc">+</span></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme</span>(<span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a>              <span class="at">strip.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))<span class="sc">+</span></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stat_summary</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="dv">1</span>), <span class="at">fun.y =</span> median,</span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a>                     <span class="at">geom =</span> <span class="st">"line"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"blue"</span>))</span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>png 
+  2 </code></pre>
+</div>
+</div>
+</section>
+<section id="probability-of-colonization-extinction-persistence" class="level2">
+<h2 class="anchored" data-anchor-id="probability-of-colonization-extinction-persistence">Probability of Colonization, Extinction, Persistence</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/pCEP.pdf"</span>,</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(time <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>, <span class="st">"M2M4"</span>)) {</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  predicted_pCEP_BBS <span class="sc">%&gt;%</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">spatial_scale =</span> <span class="fu">ifelse</span>(AREA <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">fct_relevel</span>(period, <span class="fu">c</span>(<span class="st">"M2M4"</span>, <span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(spatial_scale, pred, period, metric) <span class="sc">%&gt;%</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(predicted_pCEP_atlas <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(spatial_scale, pred, period, metric)) <span class="sc">%&gt;%</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">metric =</span> <span class="fu">case_when</span>(</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    metric <span class="sc">==</span> <span class="st">"col"</span> <span class="sc">~</span> <span class="st">"Colonization"</span>,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    metric <span class="sc">==</span> <span class="st">"ext"</span> <span class="sc">~</span> <span class="st">"Extinction"</span>,</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>    metric <span class="sc">==</span> <span class="st">"pers"</span> <span class="sc">~</span> <span class="st">"Persistence"</span></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(period <span class="sc">==</span> time,</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>         metric <span class="sc">!=</span> <span class="st">"Species pool</span><span class="sc">\n</span><span class="st">colonization"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(spatial_scale, pred,</span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>                   <span class="at">group =</span> <span class="fu">interaction</span>(spatial_scale,metric),</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill =</span> metric),</span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a>                   <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Dark2"</span>)<span class="sc">+</span></span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Dark2"</span>)<span class="sc">+</span></span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(spatial_scale, pred, <span class="at">color =</span> metric), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Probability"</span>)<span class="sc">+</span></span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain</span><span class="sc">\n</span><span class="st">(km²)"</span>)<span class="sc">+</span></span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Probability"</span>)<span class="sc">+</span></span>
+<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb44-33"><a href="#cb44-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>),</span>
+<span id="cb44-34"><a href="#cb44-34" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>))</span>
+<span id="cb44-35"><a href="#cb44-35" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-36"><a href="#cb44-36" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>png 
+  2 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"../figures/pCEP_2periods.pdf"</span>,</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">height =</span> <span class="dv">5</span>, <span class="at">width =</span> <span class="fl">5.5</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(THE_metric <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"col"</span>, <span class="st">"ext"</span>)){</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(predicted_pCEP_BBS <span class="sc">%&gt;%</span> </span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">spatial_scale =</span> <span class="fu">ifelse</span>(AREA <span class="sc">&lt;</span> <span class="fl">0.2</span>, <span class="fl">0.13</span>, <span class="fl">2.51</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">fct_relevel</span>(period, <span class="fu">c</span>(<span class="st">"M2M4"</span>, <span class="st">"M2M3"</span>, <span class="st">"M3M4"</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(spatial_scale, pred, period, metric) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rbind</span>(predicted_pCEP_atlas <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(spatial_scale, pred, period, metric)) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(pred <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> pred <span class="sc">&lt;=</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(period <span class="sc">!=</span> <span class="st">"M2M4"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(metric <span class="sc">==</span> THE_metric) <span class="sc">%&gt;%</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(spatial_scale, pred, <span class="at">group =</span> <span class="fu">interaction</span>(spatial_scale, period), <span class="at">color =</span> period))<span class="sc">+</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="fu">aes</span>(spatial_scale, pred, <span class="at">color =</span> period, <span class="at">linetype =</span> period), <span class="at">fun.y =</span> median, <span class="at">geom =</span> <span class="st">'line'</span>, <span class="at">linetype =</span> <span class="dv">2</span>, <span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()<span class="sc">+</span></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_logticks</span>(<span class="at">sides =</span> <span class="st">"b"</span>)<span class="sc">+</span></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Spatial grain (km²)"</span>)<span class="sc">+</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(THE_metric)<span class="sc">+</span></span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, .<span class="dv">5</span>)<span class="sc">+</span></span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Period"</span>, <span class="at">shape =</span> <span class="st">"Period"</span>, <span class="at">linetype =</span> <span class="st">"Period"</span>)<span class="sc">+</span></span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>))<span class="sc">+</span></span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightgrey"</span>),</span>
+<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_markdown</span>()))</span>
+<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>png 
   2 </code></pre>

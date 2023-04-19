@@ -5,6 +5,9 @@ format:
   html:
     toc: true
     toc_float: true
+    chunks:
+    warning: false
+    message: false
 editor: visual
 ---
 
@@ -580,7 +583,6 @@ nCEP_atlas_models <- readRDS("../models/nCEP_atlas.rds")
 ## Create the dataframe to predict
 nCEP_topredict <-
 atlas_data_topredict %>% 
-  # filter(!(((KVADRAT == 6844 & Date == 2015 & effort != 5))|(KVADRAT == 7248 & Date == 2015 & effort != 5))) %>% 
   filter(AREA != 0) %>% 
   dplyr::select(-c(Date, time_span, sr, effort)) %>% 
   distinct() %>% 
@@ -653,6 +655,69 @@ predicted_nCEP_BBS %>%
          jaccardM3M4 = persM3M4/(persM3M4 + colM3M4 + extM3M4),
          jaccardM2M4 = persM2M4/(persM2M4 + colM2M4 + extM2M4)) %>% 
   ungroup()
+```
+
+## Probability of Colonization, Extinction and Persistence
+
+### CzAtlas
+
+```{r}
+pCEP_atlas_models <- readRDS("../models/probaCEP_atlas.rds")
+```
+
+```{r}
+## Create the dataframe to predict
+pCEP_topredict <-
+atlas_data_topredict %>% 
+  filter(!(((KVADRAT == 6844 & Date == 2015 & effort != 5))|(KVADRAT == 7248 & Date == 2015 & effort != 5))) %>% 
+  filter(AREA != 0) %>% 
+  dplyr::select(-c(Date, time_span, sr, effort)) %>% 
+  distinct() %>% 
+  mutate(effort_diff = 0,
+         timespan_diff = 0) %>% 
+  ## add the periods
+  crossing(period = c("M2M3", "M3M4", "M2M4"))
+
+## And make predictions for each metric
+predicted_pCEP_atlas <- data.frame()
+## predictions for each metric
+for(THE_metric in names(pCEP_atlas_models)){
+  model <- pCEP_atlas_models[[THE_metric]][["xgboost"]]
+  pred <- predict(model, 
+                  newdata = pCEP_topredict)
+  predicted_pCEP_atlas <- 
+  rbind(predicted_pCEP_atlas,
+        pCEP_topredict %>% cbind(pred) %>% mutate(metric = THE_metric))
+}
+```
+
+### CzBBS
+
+```{r}
+pCEP_BBS_models <- readRDS("../models/probaCEP_JPSP.rds")
+```
+
+```{r}
+predicted_pCEP_BBS <- data.frame()
+for(THE_metric in names(pCEP_BBS_models)){
+  model <- pCEP_BBS_models[[THE_metric]][["rf"]]
+  pred <- 
+    predict(model, 
+            newdata = JPSP_topredict %>% 
+              dplyr::select(-time_span, -id, -sr, -Date, polypoint_ratio, Lat, Long, elevation, AREA) %>% 
+              mutate(timespan_diff = 0) %>% 
+              crossing(period = c("M2M3", "M3M4", "M2M4")))
+  predicted_pCEP_BBS <- 
+  rbind(
+    predicted_pCEP_BBS,
+    JPSP_topredict %>% 
+    dplyr::select(time_span, Lat, Long, elevation, AREA) %>% 
+    mutate(metric = THE_metric) %>% 
+    crossing(period = c("M2M3", "M3M4", "M2M4")) %>% 
+    cbind(pred)
+  )
+}
+
 ```
 
 
@@ -803,7 +868,7 @@ slope_JPSP_M3M4 %>%
   theme(text = element_text(size = 16))
 dev.off()
 ## Figure 4
-pdf("../figures/fig4_sr.pdf",
+pdf("../figures/sr_2periods.pdf",
     height = 5, width = 5.5)
 slope_JPSP_M2M3 %>% 
   dplyr::rename(area = AREA) %>% 
@@ -861,11 +926,8 @@ slope_JPSP_M2M3 %>%
   )) %>% 
   mutate(period = fct_relevel(period, c("1985-2003", "2003-2017"))) %>% 
   ggplot()+
-  # geom_violin(aes(area, slope, group = interaction(area, period)))+
   geom_boxplot(aes(area, slope, group = interaction(area, period), color = period))+
   stat_summary(aes(area, slope, color = period), fun.y = median, geom = 'line', size = 1, linetype = 2)+
-  # stat_summary(aes(area, slope, color = period, shape = period), fun.y = median, geom = 'point', size = 2.5)+
-  # ylim(-2, 2)+
   scale_x_log10()+
   annotation_logticks(sides = "b")+
   xlab("Spatial grain (km²)")+
@@ -882,6 +944,36 @@ dev.off()
 
 ```
 
+```{r}
+pdf("../figures/trend_details.pdf", 
+    height = 3, width = 11.297)
+## Plot the detailed trends
+JPSP_topredict %>% 
+  mutate(AREA = ifelse(AREA < 0.2, 0.13, 2.51)) %>% 
+  dplyr::select(sr, Date, AREA) %>% 
+  rbind(
+    pred130sqkm %>% dplyr::select(pred_sr, Date) %>% mutate(AREA = 130) %>% dplyr::rename(sr = pred_sr),
+    pred530sqkm %>% dplyr::select(pred_sr, Date) %>% mutate(AREA = 530) %>% dplyr::rename(sr = pred_sr),
+    pred2150sqkm %>% dplyr::select(pred_sr, Date) %>% mutate(AREA = 2150) %>% dplyr::rename(sr = pred_sr),
+    predCR %>% dplyr::select(pred_sr, Date) %>% mutate(AREA = 83900) %>% dplyr::rename(sr = pred_sr)
+  ) %>% 
+  ggplot(aes(Date, sr))+
+  stat_summary(fun = median, 
+               geom = "point", col = "red", size = 2)+
+  theme_bw()+
+  stat_summary(aes(group = 1), fun.y = median,
+               geom = "line", linetype = "dashed", size = 1, color = "blue")+
+  facet_wrap(~ AREA, nrow = 1)+
+  ylab("Species richness")+
+  xlab("Year")+
+  scale_x_continuous(breaks = c(1990,2000,2010))+
+  theme(
+    strip.background = element_blank(),
+    strip.text.x = element_blank(),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 16))
+dev.off()
+```
 
 ## Number of Colonization, Extinction, Persistence and Turnover
 
@@ -925,11 +1017,38 @@ dev.off()
 
 
 ```{r}
-pdf("../figures/col_ext_2periods.pdf",
+pdf("../figures/col_ext_jaccard_2periods.pdf",
     height = 5, width = 5.5)
-
-for(THE_metric in c("col", "ext")){
-print(predicted_nCEP_atlas %>% dplyr::select(spatial_scale, contains("M", ignore.case = F)) %>%
+for(THE_metric in c("jaccard", "col", "ext")){
+  if(THE_metric == "jaccard"){
+    print(predicted_nCEP_atlas %>% dplyr::select(spatial_scale, contains("M", ignore.case = F)) %>% 
+            dplyr::rename(AREA = spatial_scale) %>% 
+            rbind(predicted_nCEP_BBS %>% 
+                    dplyr::select(contains("M", ignore.case = F), AREA) %>% 
+                    mutate(AREA = ifelse(AREA < 0.2, 0.13, 2.51))) %>% 
+            dplyr::select(AREA, contains(THE_metric)) %>% 
+            pivot_longer(cols = contains(THE_metric),
+                         names_to = "period",
+                         values_to = "value") %>% 
+            mutate(period = str_remove(period, THE_metric)) %>% 
+            mutate(period = case_when(
+              period == "M2M4" ~ "1985-2017",
+              period == "M2M3" ~ "1985-2003",
+              period == "M3M4" ~ "2003-2017")) %>% 
+            mutate(period = fct_relevel(period, c("1985-2017", "1985-2003", "2003-2017"))) %>%
+            filter(period != "1985-2017") %>%
+            ggplot()+
+            geom_boxplot(aes(AREA, value, group = interaction(AREA, period), color = period))+
+            stat_summary(aes(AREA, value, color = period), fun.y = median, geom = 'line', size = 1, linetype = 2)+
+            scale_x_log10()+
+            annotation_logticks(sides = "b")+
+            xlab("Spatial grain (km²)")+
+            ylab(THE_metric)+
+            labs(color = "Period", shape = "Period", linetype = "Period")+
+            theme_bw()+
+            theme(text = element_text(size = 16),legend.position = "none"))
+  }else{
+    print(predicted_nCEP_atlas %>% dplyr::select(spatial_scale, contains("M", ignore.case = F)) %>%
         dplyr::rename(AREA = spatial_scale) %>% 
         rbind(predicted_nCEP_BBS %>% dplyr::select(contains("M", ignore.case = F), AREA) %>% 
                 mutate(AREA = ifelse(AREA < 0.2, 0.13, 2.51))) %>% 
@@ -956,6 +1075,7 @@ print(predicted_nCEP_atlas %>% dplyr::select(spatial_scale, contains("M", ignore
         theme_bw()+
         theme(text = element_text(size = 16),
               legend.position = "none"))
+  }
 }
 dev.off()
 ```
@@ -987,6 +1107,79 @@ print(predicted_nCEP_atlas %>%
               text = element_text(size = 16))+
         stat_summary(aes(group = 1), fun.y = median,
                      geom = "line", linetype = "dashed", size = 1, color = "blue"))
+}
+dev.off()
+```
+
+
+## Probability of Colonization, Extinction, Persistence
+
+```{r}
+pdf("../figures/pCEP.pdf",
+    height = 5, width = 5.5)
+
+for(time in c("M2M3", "M3M4", "M2M4")) {
+  print(
+  predicted_pCEP_BBS %>%
+  mutate(spatial_scale = ifelse(AREA < 0.2, 0.13, 2.51)) %>%
+  mutate(period = fct_relevel(period, c("M2M4", "M2M3", "M3M4"))) %>%
+  dplyr::select(spatial_scale, pred, period, metric) %>%
+  rbind(predicted_pCEP_atlas %>% dplyr::select(spatial_scale, pred, period, metric)) %>%
+  mutate(metric = case_when(
+    metric == "col" ~ "Colonization",
+    metric == "ext" ~ "Extinction",
+    metric == "pers" ~ "Persistence"
+  )) %>%
+  filter(period == time,
+         metric != "Species pool\ncolonization") %>%
+  ggplot()+
+  geom_boxplot(aes(spatial_scale, pred,
+                   group = interaction(spatial_scale,metric),
+                   fill = metric),
+                   outlier.shape = NA) +
+  scale_fill_brewer(palette = "Dark2")+
+  scale_color_brewer(palette = "Dark2")+
+  scale_x_log10()+
+  annotation_logticks(sides = "b")+
+  stat_summary(aes(spatial_scale, pred, color = metric), fun.y = median, geom = 'line', linetype = 2, size = 1)+
+  ylim(0,1)+
+  ylab("Probability")+
+  xlab("Spatial grain\n(km²)")+
+  labs(fill = "Probability")+
+  theme_bw()+
+  theme(text = element_text(size = 16),
+        legend.position = "none"))
+}
+dev.off()
+```
+
+```{r}
+pdf("../figures/pCEP_2periods.pdf",
+    height = 5, width = 5.5)
+for(THE_metric in c("col", "ext")){
+  print(predicted_pCEP_BBS %>% 
+  mutate(spatial_scale = ifelse(AREA < 0.2, 0.13, 2.51)) %>%
+  mutate(period = fct_relevel(period, c("M2M4", "M2M3", "M3M4"))) %>% 
+  dplyr::select(spatial_scale, pred, period, metric) %>% 
+  rbind(predicted_pCEP_atlas %>% dplyr::select(spatial_scale, pred, period, metric)) %>% 
+  filter(pred >= 0 & pred <= 1) %>% 
+  filter(period != "M2M4") %>%
+  filter(metric == THE_metric) %>%
+  ggplot()+
+  geom_boxplot(aes(spatial_scale, pred, group = interaction(spatial_scale, period), color = period))+
+  stat_summary(aes(spatial_scale, pred, color = period, linetype = period), fun.y = median, geom = 'line', linetype = 2, size = 1)+
+  scale_x_log10()+
+  annotation_logticks(sides = "b")+
+  xlab("Spatial grain (km²)")+
+  ylab(THE_metric)+
+  ylim(0, .5)+
+  labs(color = "Period", shape = "Period", linetype = "Period")+
+  theme_bw()+
+  theme(text = element_text(size = 16))+
+  theme(panel.background = element_blank(),
+        legend.position = "none",
+        panel.grid.major = element_line(colour = "lightgrey"),
+        axis.text.x = element_markdown()))
 }
 dev.off()
 ```
