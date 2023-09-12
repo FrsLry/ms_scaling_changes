@@ -1178,5 +1178,106 @@ for(THE_metric in c("col", "ext")){
         panel.grid.major = element_line(colour = "lightgrey"),
         axis.text.x = element_markdown()))
 }
+
+dev.off()
+
+```
+
+## Variable importance (Appendix B)
+
+```{r}
+CEP_atlas_cart_data <- readRDS("../data/data_model_fitting/CEP_atlas_cart_data.rds")
+CEP_atlas_cart_data$metric[CEP_atlas_cart_data$metric == "proba_colonized"] <- "proba_col"
+
+CEP_JPSP_cart_data <- readRDS("../data/data_model_fitting/CEP_JPSP_cart_data.rds")
+CEP_JPSP_cart_data <- CEP_JPSP_cart_data %>% 
+  filter(metric != "proba colonization") %>% 
+  mutate(metric = case_when(
+    metric == "colonization" ~ "col",
+    metric == "extinction" ~ "ext",
+    metric == "persistence" ~ "pers",
+    metric == "proba persistence" ~ "proba_pers",
+    metric == "proba extinction" ~ "proba_ext",
+    metric == "proba colonized" ~ "proba_col",
+  ))
+
+pdf("../figures/correlations.pdf",
+    height = 8.27, width = 11.69)
+## For Atlas model
+plot(atlas_cart_data[,names(atlas_cart_data) != "sr"],
+     main = "Correlation - CzAtlas - species richness predictors")
+
+ggplot(data = varImp(models_list_atlas$xgboost), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(x = "Predictor Variables", y = "Importance") +
+  ggtitle("Variable Importance Plot - CzAtlas - XGBoost algorithm") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+CEP_atlas_cart_data %>% filter(metric == "ext") %>% 
+    select(-quadrat, -metric, -trials, -value) %>% 
+    plot(main = "Correlation - CzAtlas - colonization/extinction/persistence")
+
+for(THE_metric in unique(CEP_atlas_cart_data$metric)){
+  if(!grepl("proba_", THE_metric)){
+    print(
+      ggplot(data = varImp(nCEP_atlas_models[[THE_metric]][["xgboost"]]), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
+      geom_bar(stat = "identity", fill = "blue") +
+      labs(x = "Predictor Variables", y = "Importance") +
+      ggtitle(paste0("Variable Importance Plot - CzAtlas - ", THE_metric)) +
+      theme_bw()+
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    )
+  }else{
+    print(
+      ggplot(data = varImp(pCEP_atlas_models[[gsub("proba_","",THE_metric)]][["xgboost"]]), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
+      geom_bar(stat = "identity", fill = "blue") +
+      labs(x = "Predictor Variables", y = "Importance") +
+      ggtitle(paste0("Variable Importance Plot - CzAtlas - ", THE_metric)) +
+      theme_bw()+
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+    )
+  }
+}
+
+## For CzBBS model
+plot(JPSP_cart_data[,names(JPSP_cart_data) != "sr"],
+     main = "Correlation - CzBBS - species richness predictors")
+
+ggplot(data = varImp(models_list_JPSP$rf), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(x = "Predictor Variables", y = "Importance") +
+  ggtitle("Variable Importance Plot - CzBBS Data - random forest algorithm") +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+CEP_JPSP_cart_data %>% 
+  filter(metric == "ext") %>%
+  dplyr::select(-metric) %>% 
+  filter(!is.na(value)) %>% 
+  plot(main = paste0("Correlation - CzBBS - colonization/extinction/persistence predictors"))
+
+for(THE_metric in unique(CEP_JPSP_cart_data$metric)){
+  if(!grepl("proba_", THE_metric)){
+    print(
+      ggplot(data = varImp(nCEP_BBS_models[[THE_metric]][["rf"]]), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
+      geom_bar(stat = "identity", fill = "blue") +
+      labs(x = "Predictor Variables", y = "Importance") +
+      ggtitle(paste0("Variable Importance Plot - CzBBS - ", THE_metric)) +
+      theme_bw()+
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    )
+  }else{
+    print(
+      ggplot(data = varImp(pCEP_atlas_models[[gsub("proba_","",THE_metric)]][["xgboost"]]), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
+      geom_bar(stat = "identity", fill = "blue") +
+      labs(x = "Predictor Variables", y = "Importance") +
+      ggtitle(paste0("Variable Importance Plot - CzBBS - ", THE_metric)) +
+      theme_bw()+
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+    )
+  }
+}
+
 dev.off()
 ```
