@@ -11,6 +11,7 @@ df <- df %>% mutate(pcol_minus_pext = (C/(C+P)) - (E/(E+P)))
 
 jpeg("figures/FigS1.jpg", width = 8.27, height = 11.69, units = "in", res = 300)
 plot(df$col_minus_ext, df$pcol_minus_pext,
+     xlab="C - E", ylab="P(C) - P(E)",
      col = ifelse(df$pcol_minus_pext > 0, "blue",
                   ifelse(df$pcol_minus_pext < 0, "red", "black")),
      pch = 19)

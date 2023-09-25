@@ -522,6 +522,57 @@ predCR %>%
   })
 ```
 
+```{r}
+## Add the 100x100 km
+load(file = "../data/data_to_predict/atlas_data_topredict_with10000sqkm.Rdata")
+## Prepare the dataset
+pred10000sqkm <-
+  atlas_data_topredict_with10000sqkm %>%
+  filter(spatial_scale == 10000) %>% 
+  rbind(atlas_data_topredict_with10000sqkm %>%
+          filter(spatial_scale == 10000) %>% 
+          mutate(Date = 2002)) %>% 
+    rbind(atlas_data_topredict_with10000sqkm %>%
+          filter(spatial_scale == 10000) %>% 
+          mutate(Date = 2015)) %>% 
+  dplyr::select(-c(spatial_scale))
+## Make the prediction
+pred10000sqkm$pred_sr <- round(predict(models_list_atlas$xgboost$finalModel, newdata = as.matrix(pred10000sqkm)))
+# pred10000sqkm$KVADRAT <- atlas_data_topredict$KVADRAT[atlas_data_topredict$spatial_scale == 10000]
+## And compute the trend
+## M2 --> M4 
+slope_10000_M2M4 <-
+pred10000sqkm %>% 
+  group_by(elevation) %>% 
+  do({
+    mod <-  lm(pred_sr ~ Date, data = .)
+    data.frame(slope = coef(mod)[2])
+  }) %>% 
+  filter(!is.na(elevation))
+## M2 --> M3
+slope_10000_M2M3 <-
+pred10000sqkm %>% 
+  filter(Date != 2015) %>% 
+  group_by(elevation) %>% 
+  do({
+    mod <-  lm(pred_sr ~ Date, data = .)
+    data.frame(slope = coef(mod)[2])
+  }) %>% 
+  filter(!is.na(elevation))
+## M3 --> M4
+slope_2150_M3M4 <-
+pred2150sqkm %>% 
+  filter(Date != 1987) %>% 
+  group_by(elevation) %>% 
+  do({
+    mod <-  lm(pred_sr ~ Date, data = .)
+    data.frame(slope = coef(mod)[2])
+  }) %>% 
+  filter(!is.na(elevation))
+
+```
+
+
 ### CzBBS
 
 ```{r}
@@ -748,6 +799,11 @@ slope_JPSP_M2M4 %>%
           dplyr::select(slope) %>% 
           mutate(area = 2150)
       ) %>% 
+      # rbind(
+      #   slope_2150_M2M4 %>% 
+      #     dplyr::select(slope) %>% 
+      #     mutate(area = 10000)
+      # ) %>% 
       rbind(
         slope_CR_M2M4 %>% 
           dplyr::select(slope) %>% 
@@ -757,6 +813,8 @@ slope_JPSP_M2M4 %>%
   ## Plot
   ggplot() +
   geom_boxplot(aes(area, slope, group = area))+
+  # geom_boxplot(aes(area, slope, group = area), data = . %>% filter(area == 10000), 
+  #              color = "blue", width = 0.3, size = 1)+
   scale_x_log10()+
   xlab("Spatial grain (km²)")+
   ylab("Species Richness change\nper year")+
