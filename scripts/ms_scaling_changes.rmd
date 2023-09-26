@@ -10,6 +10,7 @@ format:
 editor: visual
 ---
 
+
 This document contains the code to reproduce the models fitting, the predictions and the figures of our manuscript. We modeled **1)** species richness, **2)** numbers and **3)** probabilities of extinction, colonization and persistence. Models were fitted for the Atlas datasets (hereafter CzAtlas) on one hand and for the Czech Breeding Birds Survey on the other hand (hereafter CzBBS, or JPSP for Jednotný program sčítání ptáků) using repeated cross-validation with 3 different tree-based algorithms.
 
 The data used (*i.e.* CzAtlas and CzBBS) are not open thus we provide them already processed into species richness, colonization, extinction... per unit of area. If you are interested in accessing the raw datasets (with species identities), feel free to contact the corresponding author.
@@ -19,6 +20,7 @@ The data used (*i.e.* CzAtlas and CzBBS) are not open thus we provide them alrea
 ## Species richness
 
 ### CzAtlas
+
 
 ```{r, message=FALSE, warning=FALSE}
 rm(list = ls())
@@ -31,7 +33,6 @@ library(cowplot)
 library(forcats)
 library(tidyr)
 library(stringr)
-library(corrplot)
 ```
 
 ```{r}
@@ -81,7 +82,9 @@ model_list_atlas <-
 # saveRDS(model_list_atlas, "../models/sr_atlas.rds")
 ```
 
+
 ### CzBBS (or JPSP)
+
 
 ```{r}
 # Load data
@@ -128,9 +131,11 @@ model_list_JPSP <-
 # saveRDS(model_list_JPSP, file = "../models/sr_bbs.rds")
 ```
 
+
 ## Number of Colonization, Extinction and Persistence (CEP)
 
 ### CzAtlas
+
 
 ```{r}
 ## Load data for learning
@@ -181,7 +186,9 @@ CEP_models[["pers"]] <-  CEP_atlas_models_pers
 saveRDS(CEP_models, file = "../models/nCEP_atlas.rds")
 ```
 
+
 ### CzBBS
+
 
 ```{r}
 CEP_JPSP_cart_data <- readRDS("../data/data_model_fitting/CEP_JPSP_cart_data.rds")
@@ -232,9 +239,11 @@ CEP_models_JPSP[["pers"]] <-  `CEP_JPSP_models_persistence`
 saveRDS(CEP_models_JPSP, file = "../models/nCEP_JPSP.rds")
 ```
 
+
 ## Probability of Colonization, Extinction and Persitence
 
 ### CzAtlas
+
 
 ```{r}
 ## Load data for learning
@@ -285,7 +294,9 @@ CEP_models[["pers"]] <-  CEP_atlas_models_proba_pers
 saveRDS(CEP_models, file = "../models/probaCEP_atlas.rds")
 ```
 
+
 ### CzBBS
+
 
 ```{r}
 CEP_JPSP_cart_data <- readRDS("../data/data_model_fitting/CEP_JPSP_cart_data.rds")
@@ -336,9 +347,11 @@ CEP_models_JPSP[["pers"]] <-  `CEP_JPSP_models_proba persistence`
 saveRDS(CEP_models_JPSP, file = "../models/probaCEP_JPSP.rds")
 ```
 
+
 # Predictions
 
 ## Species richness
+
 
 ```{r}
 # Load the models
@@ -346,7 +359,9 @@ models_list_atlas <- readRDS(file = "../models/sr_atlas.rds")
 models_list_JPSP <- readRDS(file = "../models/sr_bbs.rds")
 ```
 
+
 ### CzAtlas
+
 
 ```{r}
 ## Load the data used for predictions
@@ -524,57 +539,39 @@ predCR %>%
 ```
 
 ```{r}
-## Add the 100x100 km
+## Add the 100 x 100 Km
 load(file = "../data/data_to_predict/atlas_data_topredict_with10000sqkm.Rdata")
+
 ## Prepare the dataset
 pred10000sqkm <-
   atlas_data_topredict_with10000sqkm %>%
-  filter(spatial_scale == 10000) %>% 
+  filter(spatial_scale == 10000) %>%
   rbind(atlas_data_topredict_with10000sqkm %>%
-          filter(spatial_scale == 10000) %>% 
-          mutate(Date = 2002)) %>% 
-    rbind(atlas_data_topredict_with10000sqkm %>%
-          filter(spatial_scale == 10000) %>% 
-          mutate(Date = 2015)) %>% 
+  filter(spatial_scale == 10000) %>%
+  mutate(Date = 2002)) %>%
+  rbind(atlas_data_topredict_with10000sqkm %>%
+  filter(spatial_scale == 10000) %>%
+  mutate(Date = 2015)) %>%
   dplyr::select(-c(spatial_scale))
 ## Make the prediction
 pred10000sqkm$pred_sr <- round(predict(models_list_atlas$xgboost$finalModel, newdata = as.matrix(pred10000sqkm)))
 # pred10000sqkm$KVADRAT <- atlas_data_topredict$KVADRAT[atlas_data_topredict$spatial_scale == 10000]
 ## And compute the trend
-## M2 --> M4 
+## M2 --> M4
 slope_10000_M2M4 <-
-pred10000sqkm %>% 
-  group_by(elevation) %>% 
+  pred10000sqkm %>%
+  group_by(elevation) %>%
   do({
-    mod <-  lm(pred_sr ~ Date, data = .)
-    data.frame(slope = coef(mod)[2])
-  }) %>% 
-  filter(!is.na(elevation))
-## M2 --> M3
-slope_10000_M2M3 <-
-pred10000sqkm %>% 
-  filter(Date != 2015) %>% 
-  group_by(elevation) %>% 
-  do({
-    mod <-  lm(pred_sr ~ Date, data = .)
-    data.frame(slope = coef(mod)[2])
-  }) %>% 
-  filter(!is.na(elevation))
-## M3 --> M4
-slope_2150_M3M4 <-
-pred2150sqkm %>% 
-  filter(Date != 1987) %>% 
-  group_by(elevation) %>% 
-  do({
-    mod <-  lm(pred_sr ~ Date, data = .)
-    data.frame(slope = coef(mod)[2])
-  }) %>% 
+  mod <-  lm(pred_sr ~ Date, data = .)
+  data.frame(slope = coef(mod)[2])
+}) %>%
   filter(!is.na(elevation))
 
 ```
 
 
 ### CzBBS
+
 
 ```{r}
 ## Load data used for predictions
@@ -624,9 +621,11 @@ JPSP_topredict %>%
   unique()
 ```
 
+
 ## Number of Colonization, Extinction and Persistence
 
 ### CzAtlas
+
 
 ```{r}
 nCEP_atlas_models <- readRDS("../models/nCEP_atlas.rds")
@@ -670,7 +669,9 @@ predicted_nCEP_atlas %>%
   ungroup()
 ```
 
+
 ### CzBBS
+
 
 ```{r}
 nCEP_BBS_models <- readRDS("../models/nCEP_JPSP.rds")
@@ -710,9 +711,11 @@ predicted_nCEP_BBS %>%
   ungroup()
 ```
 
+
 ## Probability of Colonization, Extinction and Persistence
 
 ### CzAtlas
+
 
 ```{r}
 pCEP_atlas_models <- readRDS("../models/probaCEP_atlas.rds")
@@ -744,7 +747,9 @@ for(THE_metric in names(pCEP_atlas_models)){
 }
 ```
 
+
 ### CzBBS
+
 
 ```{r}
 pCEP_BBS_models <- readRDS("../models/probaCEP_JPSP.rds")
@@ -773,6 +778,7 @@ for(THE_metric in names(pCEP_BBS_models)){
 
 ```
 
+
 # Figures
 
 ## Species richness
@@ -799,12 +805,12 @@ slope_JPSP_M2M4 %>%
         slope_2150_M2M4 %>% 
           dplyr::select(slope) %>% 
           mutate(area = 2150)
-      ) %>%
-      # rbind(
-      #   slope_10000_M2M4 %>%
-      #     dplyr::select(slope) %>%
-      #     mutate(area = 10000)
-      # ) %>%
+      ) %>% 
+      rbind(
+        slope_10000_M2M4 %>%
+          dplyr::select(slope) %>%
+          mutate(area = 10000)
+      ) %>% 
       rbind(
         slope_CR_M2M4 %>% 
           dplyr::select(slope) %>% 
@@ -814,8 +820,8 @@ slope_JPSP_M2M4 %>%
   ## Plot
   ggplot() +
   geom_boxplot(aes(area, slope, group = area))+
-  # geom_boxplot(aes(area, slope, group = area), data = . %>% filter(area == 10000),
-  #              color = "blue", width = 0.3, size = 1)+
+  geom_boxplot(aes(area, slope, group = area), data = . %>% filter(area == 10000),
+               color = "blue", width = 0.3, size = 1)+
   scale_x_log10()+
   xlab("Spatial grain (km²)")+
   ylab("Species Richness change\nper year")+
@@ -1034,7 +1040,9 @@ JPSP_topredict %>%
 dev.off()
 ```
 
+
 ## Number of Colonization, Extinction, Persistence and Turnover
+
 
 ```{r}
 pdf("../figures/nCEP_scaling.pdf",
@@ -1168,7 +1176,9 @@ print(predicted_nCEP_atlas %>%
 dev.off()
 ```
 
+
 ## Probability of Colonization, Extinction, Persistence
+
 
 ```{r}
 pdf("../figures/pCEP.pdf",
@@ -1237,108 +1247,33 @@ for(THE_metric in c("col", "ext")){
         panel.grid.major = element_line(colour = "lightgrey"),
         axis.text.x = element_markdown()))
 }
-
 dev.off()
-
 ```
 
-## Correlation and Variable importance (Appendix B)
+
+## Variable importance (revision)
+
 
 ```{r}
-CEP_atlas_cart_data <- readRDS("../data/data_model_fitting/CEP_atlas_cart_data.rds")
-CEP_atlas_cart_data$metric[CEP_atlas_cart_data$metric == "proba_colonized"] <- "proba_col"
-
-CEP_JPSP_cart_data <- readRDS("../data/data_model_fitting/CEP_JPSP_cart_data.rds")
-CEP_JPSP_cart_data <- CEP_JPSP_cart_data %>% 
-  filter(metric != "proba colonization") %>% 
-  mutate(metric = case_when(
-    metric == "colonization" ~ "col",
-    metric == "extinction" ~ "ext",
-    metric == "persistence" ~ "pers",
-    metric == "proba persistence" ~ "proba_pers",
-    metric == "proba extinction" ~ "proba_ext",
-    metric == "proba colonized" ~ "proba_col",
-  ))
-
 pdf("../figures/correlations.pdf",
-    height = 8.27, width = 11.69)
-## For Atlas model
-corrplot(cor(atlas_cart_data[,names(atlas_cart_data) != "sr"]),
-     main = "Correlation - CzAtlas - species richness predictors",
-     type = "lower", mar=c(0,0,1,0))
+    height = 5, width = 5.5)
+plot(JPSP_cart_data[,names(JPSP_cart_data) != "sr"])
+plot(atlas_cart_data[,names(atlas_cart_data) != "sr"])
 
+## For Atlas XGBoost model
 ggplot(data = varImp(models_list_atlas$xgboost), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
   geom_bar(stat = "identity", fill = "blue") +
   labs(x = "Predictor Variables", y = "Importance") +
   ggtitle("Variable Importance Plot - CzAtlas - XGBoost algorithm") +
   theme_bw()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-CEP_atlas_cart_data %>% filter(metric == "ext") %>% 
-    select(-quadrat, -metric, -trials, -value) %>% 
-    plot(main = "Correlation - CzAtlas - colonization/extinction/persistence")
-
-for(THE_metric in unique(CEP_atlas_cart_data$metric)){
-  if(!grepl("proba_", THE_metric)){
-    print(
-      ggplot(data = varImp(nCEP_atlas_models[[THE_metric]][["xgboost"]]), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
-      geom_bar(stat = "identity", fill = "blue") +
-      labs(x = "Predictor Variables", y = "Importance") +
-      ggtitle(paste0("Variable Importance Plot - CzAtlas - ", THE_metric)) +
-      theme_bw()+
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    )
-  }else{
-    print(
-      ggplot(data = varImp(pCEP_atlas_models[[gsub("proba_","",THE_metric)]][["xgboost"]]), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
-      geom_bar(stat = "identity", fill = "blue") +
-      labs(x = "Predictor Variables", y = "Importance") +
-      ggtitle(paste0("Variable Importance Plot - CzAtlas - ", THE_metric)) +
-      theme_bw()+
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
-    )
-  }
-}
-
-## For CzBBS model
-corrplot(cor(JPSP_cart_data[,names(JPSP_cart_data) != "sr"]),
-     main = "Correlation - CzBBS - species richness predictors",
-     type = "lower", mar=c(0,0,1,0))
-
-ggplot(data = varImp(models_list_JPSP$rf), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
+## For CzBBS XGBoost model
+ggplot(data = varImp(models_list_JPSP$xgboost), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
   geom_bar(stat = "identity", fill = "blue") +
   labs(x = "Predictor Variables", y = "Importance") +
-  ggtitle("Variable Importance Plot - CzBBS Data - random forest algorithm") +
+  ggtitle("Variable Importance Plot - CzBBS Data - XGBoost algorithm") +
   theme_bw()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-CEP_JPSP_cart_data %>% 
-  filter(metric == "ext") %>%
-  dplyr::select(-metric) %>% 
-  filter(!is.na(value)) %>% 
-  plot(main = paste0("Correlation - CzBBS - colonization/extinction/persistence predictors"))
-
-for(THE_metric in unique(CEP_JPSP_cart_data$metric)){
-  if(!grepl("proba_", THE_metric)){
-    print(
-      ggplot(data = varImp(nCEP_BBS_models[[THE_metric]][["rf"]]), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
-      geom_bar(stat = "identity", fill = "blue") +
-      labs(x = "Predictor Variables", y = "Importance") +
-      ggtitle(paste0("Variable Importance Plot - CzBBS - ", THE_metric)) +
-      theme_bw()+
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    )
-  }else{
-    print(
-      ggplot(data = varImp(pCEP_atlas_models[[gsub("proba_","",THE_metric)]][["xgboost"]]), aes(x = reorder(rownames(importance), Overall), y = Overall)) +
-      geom_bar(stat = "identity", fill = "blue") +
-      labs(x = "Predictor Variables", y = "Importance") +
-      ggtitle(paste0("Variable Importance Plot - CzBBS - ", THE_metric)) +
-      theme_bw()+
-      theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
-    )
-  }
-}
 
 dev.off()
 ```
